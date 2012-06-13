@@ -19,12 +19,21 @@ class MainHandler(tornado.web.RequestHandler):
         with a list of the (product,savings) pairs that on file
         for that merchant in our backend.
         """
+        
+        query = pyes.TermQuery("merchant", merchant_name) # Returns all deals for merchant merchant_name
+        
         try:
             status = self.request.arguments.get('status')[0]
+            if status == "active" or status == "inactive":
+                # If a valid status was used, add a filter to our query
+                #   and overwrite the existing query with a FilteredQuery.
+                # Later, we may want to add additional URL params, so we'll have a list of filters.
+                filters = [pyes.TermFilter("status", status)]
+                filter = pyes.ANDFilter(filters)
+                query = pyes.FilteredQuery(query, filter)
         except TypeError:
             status = None
         
-        query = pyes.TermQuery("merchant", merchant_name)
         results = self.conn.search(query=query)
         output = {}
         
