@@ -1,0 +1,5 @@
+tornado==2.3
+gunicorn
+nose
+git+git://github.com/aparo/pyes.git#egg=pyes
+fabric
